@@ -1,0 +1,31 @@
+name: Auto Build Fuwari Blog
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout content repo
+        uses: actions/checkout@v4
+      - name: Sync posts to server
+        uses: easingthemes/ssh-deploy@v5.0.3
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-avz --delete --exclude='.*'"
+          SOURCE: "./posts/"
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          TARGET: "/opt/1panel/www/sites/blog/index/src/content/posts/"
+
+      - name: Build Fuwari on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/1panel/www/sites/blog/index
+            pnpm run build
