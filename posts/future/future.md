@@ -1,10 +1,9 @@
 ---
 title: future
 published: 2026-03-29
-description: 
-image: 
-tags: []
-category: 
+description: future
+tags: [future]
+category: 其他
 draft: false
 ---
 
