@@ -1,5 +1,5 @@
 ---
-title: windowsy域渗透
+title: windows域渗透
 published: 2026-05-23
 description: 简单的概念介绍
 tags: [windows]
