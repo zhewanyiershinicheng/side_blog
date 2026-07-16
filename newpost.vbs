@@ -48,7 +48,7 @@ mdFilePath = fso.BuildPath(folderPath, mdFileName)
 ' 创建文件夹
 fso.CreateFolder folderPath
 
-' 写入 Markdown 文件
+' 写入 Markdown 文件 - 最简洁可靠的 UTF-8 with BOM 方法
 Dim content, stream
 content = "---" & vbCrLf & _
     "title: " & articleName & vbCrLf & _
@@ -60,49 +60,35 @@ content = "---" & vbCrLf & _
     "draft: false" & vbCrLf & _
     "---"
 
-' 先以 UTF-8 无 BOM 写出内容
+' 创建 ADODB.Stream 对象
 Set stream = CreateObject("ADODB.Stream")
+
+' 第一步：用文本模式生成 UTF-8 内容（不带 BOM）
 stream.Type = 2 ' adTypeText
 stream.Charset = "utf-8"
 stream.Open
 stream.WriteText content
+
+' 第二步：切换到二进制模式，现在可以读取 UTF-8 字节
+stream.Position = 0
+stream.Type = 1 ' adTypeBinary
+
+' 读取全部字节（ADODB.Stream 会自动添加 BOM）
+Dim bytes
+bytes = stream.Read
+
+' 第三步：重新创建文件，写入完整内容
+stream.Close
+stream.Open
+stream.Write bytes
 stream.SaveToFile mdFilePath, 2 ' adSaveCreateOverWrite
 stream.Close
-
-' 读回为二进制，在头部插入 UTF-8 BOM (EF BB BF)
-Dim inStream, outStream
-Set inStream = CreateObject("ADODB.Stream")
-inStream.Type = 1 ' adTypeBinary
-inStream.Open
-inStream.LoadFromFile mdFilePath
-
-Set outStream = CreateObject("ADODB.Stream")
-outStream.Type = 1 ' adTypeBinary
-outStream.Open
-
-' 写入 UTF-8 BOM
-Dim bom(2)
-bom(0) = CByte(&hEF)
-bom(1) = CByte(&hBB)
-bom(2) = CByte(&hBF)
-outStream.Write bom
-
-' 追加原始内容
-inStream.Position = 0
-outStream.Write inStream.Read
-
-' 覆盖保存
-outStream.SaveToFile mdFilePath, 2 ' adSaveCreateOverWrite
-outStream.Close
-inStream.Close
+Set stream = Nothing
 
 ' 成功提示
 MsgBox "生成成功！" & vbCrLf & vbCrLf & "文件路径：" & mdFilePath, vbInformation, "完成"
 
 ' 释放所有对象
-Set outStream = Nothing
-Set inStream = Nothing
-Set stream = Nothing
 Set fso = Nothing
 Set shell = Nothing
 
