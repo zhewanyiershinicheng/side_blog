@@ -7,48 +7,48 @@ Set shell = CreateObject("WScript.Shell")
 
 postsDir = "./posts"
 
-' ¼ì²é²¢´´½¨ posts Ä¿Â¼
+' æ£€æŸ¥å¹¶åˆ›å»º posts ç›®å½•
 If Not fso.FolderExists(postsDir) Then
     fso.CreateFolder postsDir
-    MsgBox "µ±Ç°Ä¿Â¼ÏÂÎŞpostsÄ¿Â¼£¬ÒÑ×Ô¶¯´´½¨¡£", vbInformation, "ÌáÊ¾"
+    MsgBox "å½“å‰ç›®å½•ä¸‹æ— postsç›®å½•ï¼Œå·²è‡ªåŠ¨åˆ›å»ºã€‚", vbInformation, "æç¤º"
 End If
 
-' ÊäÈëÎÄÕÂÃû³Æ£¨±ØÌî + ÖØÃû¼ì²â£©
+' è¾“å…¥æ–‡ç« åç§°ï¼ˆå¿…å¡« + é‡åæ£€æµ‹ï¼‰
 Do
-    articleName = InputBox("ÇëÊäÈëÎÄÕÂÃû³Æ£¨±ØÌî£©£º", "ĞÂ½¨ÎÄÕÂ")
+    articleName = InputBox("è¯·è¾“å…¥æ–‡ç« åç§°ï¼ˆå¿…å¡«ï¼‰ï¼š", "æ–°å»ºæ–‡ç« ")
     
-    ' ÅĞ¶Ï£ºÈç¹ûµã»÷ÁËÈ¡Ïû/¹Ø±Õ£¬Ö±½ÓÍË³ö½Å±¾
+    ' åˆ¤æ–­ï¼šå¦‚æœç‚¹å‡»äº†å–æ¶ˆ/å…³é—­ï¼Œç›´æ¥é€€å‡ºè„šæœ¬
     If IsEmpty(articleName) Then
         WScript.Quit
     End If
     
-    ' ÅĞ¶Ï£ºÈç¹ûÊäÈëÎª¿Õ£¬ÌáÊ¾ÖØÊä
+    ' åˆ¤æ–­ï¼šå¦‚æœè¾“å…¥ä¸ºç©ºï¼Œæç¤ºé‡è¾“
     If articleName = "" Then
-        MsgBox "ÎÄÕÂÃû³Æ²»ÄÜÎª¿Õ£¬ÇëÖØĞÂÊäÈë", vbExclamation, "´íÎó"
+        MsgBox "æ–‡ç« åç§°ä¸èƒ½ä¸ºç©ºï¼Œè¯·é‡æ–°è¾“å…¥", vbExclamation, "é”™è¯¯"
     Else
-        ' ¹¹½¨Â·¾¶£¬¼ì²éÊÇ·ñÖØÃû
+        ' æ„å»ºè·¯å¾„ï¼Œæ£€æŸ¥æ˜¯å¦é‡å
         folderPath = fso.BuildPath(postsDir, articleName)
         If fso.FolderExists(folderPath) Then
-            MsgBox "¸ÃÎÄÕÂÃûÒÑ´æÔÚ£¬ÇëÖØĞÂÊäÈë", vbExclamation, "ÖØÃûÌáÊ¾"
+            MsgBox "è¯¥æ–‡ç« åå·²å­˜åœ¨ï¼Œè¯·é‡æ–°è¾“å…¥", vbExclamation, "é‡åæç¤º"
         Else
-            ' ²»ÖØÃû£¬ÍË³öÑ­»·
+            ' ä¸é‡åï¼Œé€€å‡ºå¾ªç¯
             Exit Do
         End If
     End If
 Loop
 
-' »ñÈ¡µ±Ç°ÈÕÆÚ
+' è·å–å½“å‰æ—¥æœŸ
 datetime = Now()
 dateStr = Year(datetime) & "-" & Right("0" & Month(datetime), 2) & "-" & Right("0" & Day(datetime), 2)
 
-' ¹¹½¨Ê£ÓàÂ·¾¶
+' æ„å»ºå‰©ä½™è·¯å¾„
 mdFileName = articleName & ".md"
 mdFilePath = fso.BuildPath(folderPath, mdFileName)
 
-' ´´½¨ÎÄ¼ş¼Ğ
+' åˆ›å»ºæ–‡ä»¶å¤¹
 fso.CreateFolder folderPath
 
-' Ğ´Èë Markdown ÎÄ¼ş - ×î¼ò½à¿É¿¿µÄ UTF-8 with BOM ·½·¨
+' å†™å…¥ Markdown æ–‡ä»¶ - æœ€ç®€æ´å¯é çš„ UTF-8 with BOM æ–¹æ³•
 Dim content, stream
 content = "---" & vbCrLf & _
     "title: " & articleName & vbCrLf & _
@@ -60,24 +60,24 @@ content = "---" & vbCrLf & _
     "draft: false" & vbCrLf & _
     "---"
 
-' ´´½¨ ADODB.Stream ¶ÔÏó
+' åˆ›å»º ADODB.Stream å¯¹è±¡
 Set stream = CreateObject("ADODB.Stream")
 
-' µÚÒ»²½£ºÓÃÎÄ±¾Ä£Ê½Éú³É UTF-8 ÄÚÈİ£¨²»´ø BOM£©
+' ç¬¬ä¸€æ­¥ï¼šç”¨æ–‡æœ¬æ¨¡å¼ç”Ÿæˆ UTF-8 å†…å®¹ï¼ˆä¸å¸¦ BOMï¼‰
 stream.Type = 2 ' adTypeText
 stream.Charset = "utf-8"
 stream.Open
 stream.WriteText content
 
-' µÚ¶ş²½£ºÇĞ»»µ½¶ş½øÖÆÄ£Ê½£¬ÏÖÔÚ¿ÉÒÔ¶ÁÈ¡ UTF-8 ×Ö½Ú
+' ç¬¬äºŒæ­¥ï¼šåˆ‡æ¢åˆ°äºŒè¿›åˆ¶æ¨¡å¼ï¼Œç°åœ¨å¯ä»¥è¯»å– UTF-8 å­—èŠ‚
 stream.Position = 0
 stream.Type = 1 ' adTypeBinary
 
-' ¶ÁÈ¡È«²¿×Ö½Ú£¨ADODB.Stream »á×Ô¶¯Ìí¼Ó BOM£©
+' è¯»å–å…¨éƒ¨å­—èŠ‚ï¼ˆADODB.Stream ä¼šè‡ªåŠ¨æ·»åŠ  BOMï¼‰
 Dim bytes
 bytes = stream.Read
 
-' µÚÈı²½£ºÖØĞÂ´´½¨ÎÄ¼ş£¬Ğ´ÈëÍêÕûÄÚÈİ
+' ç¬¬ä¸‰æ­¥ï¼šé‡æ–°åˆ›å»ºæ–‡ä»¶ï¼Œå†™å…¥å®Œæ•´å†…å®¹
 stream.Close
 stream.Open
 stream.Write bytes
@@ -85,12 +85,12 @@ stream.SaveToFile mdFilePath, 2 ' adSaveCreateOverWrite
 stream.Close
 Set stream = Nothing
 
-' ³É¹¦ÌáÊ¾
-MsgBox "Éú³É³É¹¦£¡" & vbCrLf & vbCrLf & "ÎÄ¼şÂ·¾¶£º" & mdFilePath, vbInformation, "Íê³É"
+' æˆåŠŸæç¤º
+MsgBox "ç”ŸæˆæˆåŠŸï¼" & vbCrLf & vbCrLf & "æ–‡ä»¶è·¯å¾„ï¼š" & mdFilePath, vbInformation, "å®Œæˆ"
 
-' ÊÍ·ÅËùÓĞ¶ÔÏó
+' é‡Šæ”¾æ‰€æœ‰å¯¹è±¡
 Set fso = Nothing
 Set shell = Nothing
 
-' Ç¿ÖÆÍË³ö½Å±¾
+' å¼ºåˆ¶é€€å‡ºè„šæœ¬
 WScript.Quit
